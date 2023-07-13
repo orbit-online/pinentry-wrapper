@@ -92,8 +92,7 @@ declare -p "${prefix}__desc" "${prefix}__error" "${prefix}__cancel" \
     commands+=("SETERROR $__error")
   fi
   commands+=("GETPIN")
-  join_by() { local IFS="$1"; shift; echo "$*"; }
-  pinentry_script=$(join_by $'\n' "${commands[@]}")
+  pinentry_script=$(printf "%s\n" "${commands[@]}")
   debug "Final pinentry script:\n%s" "$pinentry_script"
 
   out=$("$pinentry_cmd" <<<"$pinentry_script" || true)
