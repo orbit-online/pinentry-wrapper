@@ -65,17 +65,19 @@ declare -p "${prefix}__desc" "${prefix}__error" "${prefix}__cancel" \
 
   verbose "pinentry command found: '%s'" "$pinentry_cmd"
 
-  local commands=() pinentry_script out
+  local commands=() pinentry_script out prompt desc
   if [[ -n $PINENTRY_PROMPT ]]; then
-    commands+=("SETPROMPT $PINENTRY_PROMPT")
+    prompt=$PINENTRY_PROMPT
   else
-    commands+=("SETPROMPT ${PROMPT:-Enter your password}")
+    prompt=${PROMPT:-Enter your password}
   fi
+  commands+=("SETPROMPT $(escape "$prompt")")
   if [[ $__desc = "\${PINENTRY_DESC:-}" ]]; then
-    [[ -z $PINENTRY_DESC ]] || commands+=("SETDESC $PINENTRY_DESC")
+    [[ -z $PINENTRY_DESC ]] || desc=$PINENTRY_DESC
   elif [[ -n $__desc ]]; then
-    commands+=("SETDESC $__desc")
+    desc=$__desc
   fi
+  commands+=("SETDESC $(escape "$desc")")
   if [[ $__ok = "\${PINENTRY_OK:-OK}" ]]; then
     commands+=("SETOK ${PINENTRY_OK:-OK}")
   elif [[ -n $__ok ]]; then
@@ -108,6 +110,13 @@ declare -p "${prefix}__desc" "${prefix}__error" "${prefix}__cancel" \
   else
     fatal "Unknown pinentry response: %s" "$out"
   fi
+}
+
+escape() {
+  local str=$1
+  str=${str//%/%25}
+  str=${str//$'\n'/%0A}
+  printf "%s" "$str"
 }
 
 pinentry_wrapper "$@"
