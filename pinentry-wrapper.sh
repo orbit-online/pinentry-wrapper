@@ -95,7 +95,7 @@ declare -p "${prefix}__desc" "${prefix}__error" "${prefix}__cancel" \
   pinentry_script=$(printf "%s\n" "${commands[@]}")
   debug "Final pinentry script:\n%s" "$pinentry_script"
 
-  out=$("$pinentry_cmd" <<<"$pinentry_script" || true)
+  out=$("$pinentry_cmd" --ttyname "$(tty)" <<<"$pinentry_script" || true)
   debug "pinentry response:\n%s" "$out"
   if [[ $out = *$'\nOK' ]]; then
     out=${out#$'OK Pleased to meet you\n'}
