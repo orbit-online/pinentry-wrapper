@@ -31,24 +31,24 @@ Note:
 # shellcheck disable=2016,1090,1091,2034
 docopt() { source "$pkgroot/.upkg/andsens/docopt.sh/docopt-lib.sh" '1.0.0' || {
 ret=$?; printf -- "exit %d\n" "$ret"; exit "$ret"; }; set -e
-trimmed_doc=${DOC:0:648}; usage=${DOC:71:44}; digest=603ae; shorts=(-d -e -c -o)
-longs=(--desc --error --cancel --ok); argcounts=(1 1 1 1); node_0(){
-value __desc 0; }; node_1(){ value __error 1; }; node_2(){ value __cancel 2; }
-node_3(){ value __ok 3; }; node_4(){ value PROMPT a; }; node_5(){
+trimmed_doc=${DOC:0:648}; usage=${DOC:71:44}; digest=603ae; shorts=(-o -d -e -c)
+longs=(--ok --desc --error --cancel); argcounts=(1 1 1 1); node_0(){
+value __ok 0; }; node_1(){ value __desc 1; }; node_2(){ value __error 2; }
+node_3(){ value __cancel 3; }; node_4(){ value PROMPT a; }; node_5(){
 optional 0 1 2 3; }; node_6(){ optional 5; }; node_7(){ optional 4; }; node_8(){
 required 6 7; }; node_9(){ required 8; }; cat <<<' docopt_exit() {
 [[ -n $1 ]] && printf "%s\n" "$1" >&2; printf "%s\n" "${DOC:71:44}" >&2; exit 1
-}'; unset var___desc var___error var___cancel var___ok var_PROMPT; parse 9 "$@"
-local prefix=${DOCOPT_PREFIX:-''}; unset "${prefix}__desc" "${prefix}__error" \
-"${prefix}__cancel" "${prefix}__ok" "${prefix}PROMPT"
+}'; unset var___ok var___desc var___error var___cancel var_PROMPT; parse 9 "$@"
+local prefix=${DOCOPT_PREFIX:-''}; unset "${prefix}__ok" "${prefix}__desc" \
+"${prefix}__error" "${prefix}__cancel" "${prefix}PROMPT"
+eval "${prefix}"'__ok=${var___ok:-'"'"'${PINENTRY_OK:-OK}'"'"'}'
 eval "${prefix}"'__desc=${var___desc:-'"'"'${PINENTRY_DESC:-}'"'"'}'
 eval "${prefix}"'__error=${var___error:-'"'"'${PINENTRY_ERROR:-}'"'"'}'
 eval "${prefix}"'__cancel=${var___cancel:-'"'"'${PINENTRY_CANCEL:-Cancel}'"'"'}'
-eval "${prefix}"'__ok=${var___ok:-'"'"'${PINENTRY_OK:-OK}'"'"'}'
 eval "${prefix}"'PROMPT=${var_PROMPT:-}'; local docopt_i=1
 [[ $BASH_VERSION =~ ^4.3 ]] && docopt_i=2; for ((;docopt_i>0;docopt_i--)); do
-declare -p "${prefix}__desc" "${prefix}__error" "${prefix}__cancel" \
-"${prefix}__ok" "${prefix}PROMPT"; done; }
+declare -p "${prefix}__ok" "${prefix}__desc" "${prefix}__error" \
+"${prefix}__cancel" "${prefix}PROMPT"; done; }
 # docopt parser above, complete command for generating this parser is `docopt.sh --library='"$pkgroot/.upkg/andsens/docopt.sh/docopt-lib.sh"' pinentry-wrapper.sh`
   eval "$(docopt "$@")"
 
@@ -62,37 +62,20 @@ declare -p "${prefix}__desc" "${prefix}__error" "${prefix}__cancel" \
   else
     fatal "Missing dependency: Unable to find pinentry command"
   fi
-
   verbose "pinentry command found: '%s'" "$pinentry_cmd"
 
-  local commands=() pinentry_script out prompt desc
-  if [[ -n $PINENTRY_PROMPT ]]; then
-    prompt=$PINENTRY_PROMPT
-  else
-    prompt=${PROMPT:-Enter your password}
-  fi
-  commands+=("SETPROMPT $(escape "$prompt")")
-  if [[ $__desc = "\${PINENTRY_DESC:-}" ]]; then
-    [[ -z $PINENTRY_DESC ]] || desc=$PINENTRY_DESC
-  elif [[ -n $__desc ]]; then
-    desc=$__desc
-  fi
-  commands+=("SETDESC $(escape "$desc")")
-  if [[ $__ok = "\${PINENTRY_OK:-OK}" ]]; then
-    commands+=("SETOK ${PINENTRY_OK:-OK}")
-  elif [[ -n $__ok ]]; then
-    commands+=("SETOK $__ok")
-  fi
-  if [[ $__cancel = "\${PINENTRY_CANCEL:-Cancel}" ]]; then
-    commands+=("SETCANCEL ${PINENTRY_CANCEL:-Cancel}")
-  elif [[ -n $__cancel ]]; then
-    commands+=("SETCANCEL $__cancel")
-  fi
-  if [[ $__error = "\${PINENTRY_ERROR:-}" ]]; then
-    [[ -z $PINENTRY_ERROR ]] || commands+=("SETERROR $PINENTRY_ERROR")
-  elif [[ -n $__error ]]; then
-    commands+=("SETERROR $__error")
-  fi
+  [[ -n $PROMPT ]] || PROMPT=${PINENTRY_PROMPT:-Enter your password}
+  [[ $__desc != "\${PINENTRY_DESC:-}" ]] || __desc=${PINENTRY_DESC:-}
+  [[ $__ok != "\${PINENTRY_OK:-OK}" ]] || __ok=${PINENTRY_OK:-OK}
+  [[ $__cancel != "\${PINENTRY_CANCEL:-Cancel}" ]] || __cancel=${PINENTRY_CANCEL:-Cancel}
+  [[ $__error != "\${PINENTRY_ERROR:-}" ]] || __error=${PINENTRY_ERROR:-}
+
+  local pinentry_script out commands=()
+  commands+=("SETPROMPT $(escape "$PROMPT")")
+  [[ -z $__desc ]] || commands+=("SETDESC $(escape "$__desc")")
+  commands+=("SETOK $__ok")
+  commands+=("SETCANCEL $__cancel")
+  [[ -z $__error ]] || commands+=("SETERROR $__error")
   commands+=("GETPIN")
   pinentry_script=$(printf "%s\n" "${commands[@]}")
   debug "Final pinentry script:\n%s" "$pinentry_script"
