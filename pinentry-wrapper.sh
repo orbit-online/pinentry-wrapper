@@ -64,7 +64,8 @@ declare -p "${prefix}__ok" "${prefix}__desc" "${prefix}__error" \
   fi
   verbose "pinentry command found: '%s'" "$pinentry_cmd"
 
-  [[ -n $PROMPT ]] || PROMPT=${PINENTRY_PROMPT:-Enter your password}
+  [[ -z $PINENTRY_PROMPT ]] || PROMPT=$PINENTRY_PROMPT
+  [[ -n $PROMPT ]] || PROMPT='Enter your password'
   [[ $__desc != "\${PINENTRY_DESC:-}" ]] || __desc=${PINENTRY_DESC:-}
   [[ $__ok != "\${PINENTRY_OK:-OK}" ]] || __ok=${PINENTRY_OK:-OK}
   [[ $__cancel != "\${PINENTRY_CANCEL:-Cancel}" ]] || __cancel=${PINENTRY_CANCEL:-Cancel}
