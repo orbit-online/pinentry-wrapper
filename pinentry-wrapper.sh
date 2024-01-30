@@ -2,9 +2,8 @@
 
 pinentry_wrapper() {
   set -eo pipefail; shopt -s inherit_errexit
-  local pkgroot; pkgroot=$(upkg root "${BASH_SOURCE[0]}")
+  local pkgroot; pkgroot=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
   source "$pkgroot/.upkg/orbit-online/records.sh/records.sh"
-  PATH="$pkgroot/.upkg/.bin:$PATH"
 
   DOC="Pinentry Wrapper - Cross-platform pinentry script with a CLI interface
 Usage:
