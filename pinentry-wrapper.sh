@@ -67,7 +67,7 @@ declare -p "${prefix}__ok" "${prefix}__desc" "${prefix}__error" \
   [[ $__cancel != "\${PINENTRY_CANCEL:-Cancel}" ]] || __cancel=${PINENTRY_CANCEL:-Cancel}
   [[ $__error != "\${PINENTRY_ERROR:-}" ]] || __error=${PINENTRY_ERROR:-}
 
-  local pinentry_script out commands=()
+  local pinentry_script out out_log commands=()
   commands+=("SETPROMPT $(escape "$PROMPT")")
   [[ -z $__desc ]] || commands+=("SETDESC $(escape "$__desc")")
   commands+=("SETOK $__ok")
@@ -78,7 +78,9 @@ declare -p "${prefix}__ok" "${prefix}__desc" "${prefix}__error" \
   debug "Final pinentry script:\n%s" "$pinentry_script"
 
   out=$("$pinentry_cmd" --ttyname "$(tty)" <<<"$pinentry_script" || true)
-  debug "pinentry response:\n%s" "$out"
+  # shellcheck disable=SC2001
+  out_log=$(sed 's/^D .*/D *REDACTED*/' <<<"$out")
+  debug "pinentry response:\n%s" "$out_log"
   if [[ $out = *$'\nOK' ]]; then
     out=${out#$'OK Pleased to meet you\n'}
     out=${out%%$'\nOK'}
@@ -88,7 +90,7 @@ declare -p "${prefix}__ok" "${prefix}__desc" "${prefix}__error" \
   elif [[ $out = *'ERR 83886179'* ]]; then
     return 2
   else
-    fatal "Unknown pinentry response: %s" "$out"
+    fatal "Unknown pinentry response: %s" "$out_log"
   fi
 }
 
