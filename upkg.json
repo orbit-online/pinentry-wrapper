@@ -1,9 +1,7 @@
 {
-  "commands": {
-    "pinentry-wrapper": "pinentry-wrapper.sh"
-  },
+  "name": "pinentry-wrapper",
   "dependencies": {
-    "orbit-online/records.sh": "v0.9.5",
-    "andsens/docopt.sh": "v1.0.0-upkg"
+    "ssh://git@github.com/orbit-online/records.sh": "493ebb2c7c52dcf8f83a6fcaae6c7cbcfb2be736",
+    "https://github.com/andsens/docopt.sh#name=docopt.sh": "0447a7834ecb5120c112456d961f7fdb23e7bdef"
   }
 }
