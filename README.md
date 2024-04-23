@@ -7,11 +7,7 @@ commandline options (or alternatively environment variables).
 
 ## Installation
 
-With [μpkg](https://github.com/orbit-online/upkg)
-
-```
-upkg install -g orbit-online/pinentry-wrapper@<VERSION>
-```
+See [the latest release](https://github.com/orbit-online/pinentry-wrapper/releases/latest) for instructions.
 
 ## Usage
 

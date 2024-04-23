@@ -1,9 +1,13 @@
 {
-  "commands": {
-    "pinentry-wrapper": "pinentry-wrapper.sh"
-  },
-  "dependencies": {
-    "orbit-online/records.sh": "v0.9.5",
-    "andsens/docopt.sh": "v1.0.0-upkg"
-  }
+  "name": "pinentry-wrapper",
+  "dependencies": [
+    {
+      "tar": "https://github.com/orbit-online/records.sh/releases/download/v1.0.0/records.sh.tar.gz",
+      "sha256": "0469f15f5b689cb29b30f2a3b233c61856eb209fc50c74ef141120bbf70697f1"
+    },
+    {
+      "tar": "https://github.com/andsens/docopt.sh/releases/download/v2.0.0/docopt-lib.sh.tar.gz",
+      "sha256": "1d8b771418583cce2e6362c4c6b9a2cc506b241327424d5cc0b6fac8e8463806"
+    }
+  ]
 }

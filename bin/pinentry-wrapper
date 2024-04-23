@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
+# shellcheck source-path=..
 
 pinentry_wrapper() {
   set -eo pipefail; shopt -s inherit_errexit
-  local pkgroot; pkgroot=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
-  source "$pkgroot/.upkg/orbit-online/records.sh/records.sh"
+  local pkgroot; pkgroot=$(realpath "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/..")
+  source "$pkgroot/.upkg/records.sh/records.sh"
 
   DOC="Pinentry Wrapper - Cross-platform pinentry script with a CLI interface
 Usage:
@@ -24,28 +25,25 @@ Note:
   If PROMPT is not defined or overridden, the default is 'Enter your password'
 "
 # docopt parser below, refresh this parser with `docopt.sh pinentry-wrapper.sh`
-# shellcheck disable=2016,1090,1091,2034
-docopt() { source "$pkgroot/.upkg/andsens/docopt.sh/docopt-lib.sh" '1.0.0' || {
-ret=$?; printf -- "exit %d\n" "$ret"; exit "$ret"; }; set -e
-trimmed_doc=${DOC:0:648}; usage=${DOC:71:44}; digest=603ae; shorts=(-o -d -e -c)
-longs=(--ok --desc --error --cancel); argcounts=(1 1 1 1); node_0(){
-value __ok 0; }; node_1(){ value __desc 1; }; node_2(){ value __error 2; }
-node_3(){ value __cancel 3; }; node_4(){ value PROMPT a; }; node_5(){
-optional 0 1 2 3; }; node_6(){ optional 5; }; node_7(){ optional 4; }; node_8(){
-required 6 7; }; node_9(){ required 8; }; cat <<<' docopt_exit() {
-[[ -n $1 ]] && printf "%s\n" "$1" >&2; printf "%s\n" "${DOC:71:44}" >&2; exit 1
-}'; unset var___ok var___desc var___error var___cancel var_PROMPT; parse 9 "$@"
-local prefix=${DOCOPT_PREFIX:-''}; unset "${prefix}__ok" "${prefix}__desc" \
-"${prefix}__error" "${prefix}__cancel" "${prefix}PROMPT"
-eval "${prefix}"'__ok=${var___ok:-'"'"'${PINENTRY_OK:-OK}'"'"'}'
-eval "${prefix}"'__desc=${var___desc:-'"'"'${PINENTRY_DESC:-}'"'"'}'
-eval "${prefix}"'__error=${var___error:-'"'"'${PINENTRY_ERROR:-}'"'"'}'
-eval "${prefix}"'__cancel=${var___cancel:-'"'"'${PINENTRY_CANCEL:-Cancel}'"'"'}'
-eval "${prefix}"'PROMPT=${var_PROMPT:-}'; local docopt_i=1
-[[ $BASH_VERSION =~ ^4.3 ]] && docopt_i=2; for ((;docopt_i>0;docopt_i--)); do
-declare -p "${prefix}__ok" "${prefix}__desc" "${prefix}__error" \
-"${prefix}__cancel" "${prefix}PROMPT"; done; }
-# docopt parser above, complete command for generating this parser is `docopt.sh --library='"$pkgroot/.upkg/andsens/docopt.sh/docopt-lib.sh"' pinentry-wrapper.sh`
+# shellcheck disable=2016,2086,2317,1090,1091,2034
+docopt() { source "$pkgroot/.upkg/docopt-lib.sh/docopt-lib.sh" '2.0.0' || {
+ret=$?;printf -- "exit %d\n" "$ret";exit "$ret";};set -e
+trimmed_doc=${DOC:0:648};usage=${DOC:71:44};digest=603ae;options=('-d --desc 1'\
+ '-o --ok 1' '-c --cancel 1' '-e --error 1');node_0(){ value __desc 0;}
+node_1(){ value __ok 1;};node_2(){ value __cancel 2;};node_3(){ value __error 3
+};node_4(){ value PROMPT a;};node_5(){ optional 0 1 2 3;};node_6(){ optional 4;}
+node_7(){ sequence 5 6;};cat <<<' docopt_exit() { [[ -n $1 ]] && printf "%s\n" \
+"$1" >&2;printf "%s\n" "${DOC:71:44}" >&2;exit 1;}';local varnames=(__desc \
+__ok __cancel __error PROMPT) varname;for varname in "${varnames[@]}"; do
+unset "var_$varname";done;parse 7 "$@";local p=${DOCOPT_PREFIX:-''};for \
+varname in "${varnames[@]}"; do unset "$p$varname";done;eval $p'__desc=${var__'\
+'_desc:-'"'"'${PINENTRY_DESC:-}'"'"'};'$p'__ok=${var___ok:-'"'"'\
+${PINENTRY_OK:-OK}'"'"'};'$p'__cancel=${var___cancel:-'"'"'\
+${PINENTRY_CANCEL:-Cancel}'"'"'};'$p'__error=${var___error:-'"'"'\
+${PINENTRY_ERROR:-}'"'"'};'$p'PROMPT=${var_PROMPT:-};';local docopt_i=1;[[ \
+$BASH_VERSION =~ ^4.3 ]] && docopt_i=2;for ((;docopt_i>0;docopt_i--)); do for \
+varname in "${varnames[@]}"; do declare -p "$p$varname";done;done;}
+# docopt parser above, complete command for generating this parser is `docopt.sh --library='"$pkgroot/.upkg/docopt-lib.sh/docopt-lib.sh"' pinentry-wrapper.sh`
   eval "$(docopt "$@")"
 
   local pinentry_cmd pinentry_mac="pinentry-mac" pinentry_win="/mnt/c/Program Files (x86)/Gpg4win/bin/pinentry.exe"
