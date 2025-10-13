@@ -25,25 +25,26 @@ Note:
   If PROMPT is not defined or overridden, the default is 'Enter your password'
 "
 # docopt parser below, refresh this parser with `docopt.sh pinentry-wrapper`
-# shellcheck disable=2016,2086,2317,1090,1091,2034
-docopt() { local v='2.0.1'; source \
-"$pkgroot/.upkg/docopt-lib.sh/docopt-lib.sh" "$v" || { ret=$?;printf -- "exit \
-%d\n" "$ret";exit "$ret";};set -e;trimmed_doc=${DOC:0:648};usage=${DOC:71:44}
-digest=603ae;options=('-d --desc 1' '-o --ok 1' '-c --cancel 1' '-e --error 1')
-node_0(){ value __desc 0;};node_1(){ value __ok 1;};node_2(){ value __cancel 2;}
-node_3(){ value __error 3;};node_4(){ value PROMPT a;};node_5(){ optional 0 1 \
-2 3;};node_6(){ optional 4;};node_7(){ sequence 5 6;};cat <<<' docopt_exit() {
-[[ -n $1 ]] && printf "%s\n" "$1" >&2;printf "%s\n" "${DOC:71:44}" >&2;exit 1;}'
-local varnames=(__desc __ok __cancel __error PROMPT) varname;for varname in \
-"${varnames[@]}"; do unset "var_$varname";done;parse 7 "$@";local \
-p=${DOCOPT_PREFIX:-''};for varname in "${varnames[@]}"; do unset "$p$varname"
-done;eval $p'__desc=${var___desc:-'"'"'${PINENTRY_DESC:-}'"'"'};'$p'__ok=${var'\
-'___ok:-'"'"'${PINENTRY_OK:-OK}'"'"'};'$p'__cancel=${var___cancel:-'\
-"'"'${PINENTRY_CANCEL:-Cancel}'"'"'};'$p'__error=${var___error:-'\
-"'"'${PINENTRY_ERROR:-}'"'"'};'$p'PROMPT=${var_PROMPT:-};';local docopt_i=1;[[ \
-$BASH_VERSION =~ ^4.3 ]] && docopt_i=2;for ((;docopt_i>0;docopt_i--)); do for \
-varname in "${varnames[@]}"; do declare -p "$p$varname";done;done;}
-# docopt parser above, complete command for generating this parser is `docopt.sh --library='"$pkgroot/.upkg/docopt-lib.sh/docopt-lib.sh"' pinentry-wrapper`
+# shellcheck disable=2016,2086,2329,1090,1091,2034
+docopt() { local v='2.0.3'; source \
+"$pkgroot/.upkg/docopt-lib.sh-v$v/docopt-lib.sh" "$v" || { ret=$?;printf -- \
+"exit %d\n" "$ret";exit "$ret";};set -e;trimmed_doc=${DOC:0:648}
+usage=${DOC:71:44};digest=603ae;options=('-d --desc 1' '-o --ok 1' '-c --cance'\
+'l 1' '-e --error 1');node_0(){ value __desc 0;};node_1(){ value __ok 1;}
+node_2(){ value __cancel 2;};node_3(){ value __error 3;};node_4(){ value \
+PROMPT a;};node_5(){ optional 0 1 2 3;};node_6(){ optional 4;};node_7(){
+sequence 5 6;};cat <<<' docopt_exit() { [[ -n $1 ]] && printf "%s\n" "$1" >&2
+printf "%s\n" "${DOC:71:44}" >&2;exit 1;}';local varnames=(__desc __ok \
+__cancel __error PROMPT) varname;for varname in "${varnames[@]}"; do unset \
+"var_$varname";done;parse 7 "$@";local p=${DOCOPT_PREFIX:-''};for varname in \
+"${varnames[@]}"; do unset "$p$varname";done;eval $p'__desc=${var___desc:-'\
+"'"'${PINENTRY_DESC:-}'"'"'};'$p'__ok=${var___ok:-'"'"'${PINENTRY_OK:-OK}'"'\
+"'};'$p'__cancel=${var___cancel:-'"'"'${PINENTRY_CANCEL:-Cancel}'"'"'};'$p'__e'\
+'rror=${var___error:-'"'"'${PINENTRY_ERROR:-}'"'"'};'$p'PROMPT=${var_PROMPT:-}'\
+';';local docopt_i=1;[[ $BASH_VERSION =~ ^4.3 ]] && docopt_i=2;for \
+((;docopt_i>0;docopt_i--)); do for varname in "${varnames[@]}"; do declare -p \
+"$p$varname";done;done;}
+# docopt parser above, complete command for generating this parser is `docopt.sh --library='"$PKGROOT/.upkg/docopt-lib.sh-v$v/docopt-lib.sh"' pinentry-wrapper`
   eval "$(docopt "$@")"
 
   local pinentry_cmd pinentry_mac="pinentry-mac" pinentry_win="/mnt/c/Program Files (x86)/Gpg4win/bin/pinentry.exe"
